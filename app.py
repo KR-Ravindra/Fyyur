@@ -1,7 +1,3 @@
-#----------------------------------------------------------------------------#
-# Imports
-#----------------------------------------------------------------------------#
-
 import sys
 import json
 import dateutil.parser
@@ -16,21 +12,16 @@ from logging import Formatter, FileHandler
 from flask_wtf import Form
 from forms import *
 
-#----------------------------------------------------------------------------#
-# App Config.
-#----------------------------------------------------------------------------#
-
+#App
 app = Flask(__name__)
 moment = Moment(app)
 app.config.from_object('config')
 db = SQLAlchemy(app)
 
-# connect to a local postgresql database
+
 migrate = Migrate(app, db)
 
-#----------------------------------------------------------------------------#
-# Models.
-#----------------------------------------------------------------------------#
+
 
 class Venue(db.Model):
     __tablename__ = 'venue'
@@ -79,9 +70,6 @@ class Show(db.Model):
     def __repr__(self):
         return '<Show {}{}>'.format(self.artist_id, self.venue_id)
 
-#----------------------------------------------------------------------------#
-# Filters.
-#----------------------------------------------------------------------------#
 
 def format_datetime(value, format='medium'):
   date = dateutil.parser.parse(value)
@@ -93,9 +81,7 @@ def format_datetime(value, format='medium'):
 
 app.jinja_env.filters['datetime'] = format_datetime
 
-#----------------------------------------------------------------------------#
 # Controllers.
-#----------------------------------------------------------------------------#
 
 @app.route('/')
 def index():
@@ -103,7 +89,6 @@ def index():
 
 
 #  Venues
-#  ----------------------------------------------------------------
 
 @app.route('/venues')
 def venues():
@@ -127,9 +112,6 @@ def venues():
 
 @app.route('/venues/search', methods=['POST'])
 def search_venues():
-  # TODO: implement search on artists with partial string search. Ensure it is case-insensitive.
-  # seach for Hop should return "The Musical Hop".
-  # search for "Music" should return "The Musical Hop" and "Park Square Live Music & Coffee"
   search_term = request.form.get('search_term', '')
   search_result = db.session.query(Venue).filter(Venue.name.ilike(f'%{search_term}%')).all()
   data = []
@@ -148,8 +130,6 @@ def search_venues():
 
 @app.route('/venues/<int:venue_id>')
 def show_venue(venue_id):
-  # shows the venue page with the given venue_id
-  # TODO: replace with real venue data from the venues table, using venue_id
   venue = Venue.query.get(venue_id)
 
   if not venue: 
@@ -199,7 +179,6 @@ def show_venue(venue_id):
   return render_template('pages/show_venue.html', venue=data)
 
 #  Create Venue
-#  ----------------------------------------------------------------
 
 @app.route('/venues/create', methods=['GET'])
 def create_venue_form():
@@ -260,7 +239,6 @@ def delete_venue(venue_id):
   return render_template('pages/home.html')
 
 #  Artists
-#  ----------------------------------------------------------------
 
 @app.route('/artists')
 def artists():
@@ -440,7 +418,6 @@ def edit_venue_submission(venue_id):
   return redirect(url_for('show_venue', venue_id=venue_id))
 
 #  Create Artist
-#  ----------------------------------------------------------------
 
 @app.route('/artists/create', methods=['GET'])
 def create_artist_form():
@@ -479,7 +456,6 @@ def create_artist_submission():
 
 
 #  Shows
-#  ----------------------------------------------------------------
 
 @app.route('/shows')
 def shows():
@@ -548,15 +524,12 @@ if not app.debug:
     app.logger.addHandler(file_handler)
     app.logger.info('errors')
 
-#----------------------------------------------------------------------------#
-# Launch.
-#----------------------------------------------------------------------------#
 
-# Default port:
+
 if __name__ == '__main__':
     app.run()
 
-# Or specify port manually:
+# Manual port specification
 '''
 if __name__ == '__main__':
     port = int(os.environ.get('PORT', 5000))
